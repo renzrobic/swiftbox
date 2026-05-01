@@ -1,0 +1,44 @@
+@import "tailwindcss";
+/* Import Inter from Google Fonts for maximum sharpness and weight range */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@theme {
+  /* Set Inter as your primary sans font */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  
+  /* Keeping your brand colors, but removing the "accent" font */
+  --color-royal-blue: #0755BB;
+  --color-matte-charcoal: #1E1E1E;
+  --color-electric-lime: #C1F701; 
+  --color-cool-white: #F5F9FF;
+  
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+}
+
+@layer base {
+  /* 🛠️ GLOBAL OVERFLOW FIX: Prevents the horizontal wobble/white bar on mobile */
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: white;
+    color: var(--color-matte-charcoal);
+    /* Improved legibility for Inter */
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Make sure headings use the negative letter-spacing Inter is famous for */
+  h1, h2, h3, h4 {
+    letter-spacing: -0.025em;
+    font-weight: 800;
+  } 
+}

@@ -1,0 +1,32 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+
+export default function ScrollReveal({ children, delay = 0, noScale = false }) {
+  return (
+    <motion.div
+      initial={{ 
+        opacity: 0, 
+        y: 60, 
+        scale: noScale ? 1 : 0.98 
+      }}
+      whileInView={{ 
+        opacity: 1, 
+        y: 0, 
+        scale: 1 
+      }}
+      viewport={{ 
+        once: true, 
+        margin: "-150px 0px -50px 0px",
+        amount: 0.15 
+      }}
+      transition={{ 
+        duration: 1.1, 
+        delay: delay,
+        ease: [0.16, 1, 0.3, 1] 
+      }}
+      className="w-full"
+    >
+      {children}
+    </motion.div>
+  );
+}
