@@ -1,16 +1,20 @@
 @import "tailwindcss";
-/* Import Inter from Google Fonts for maximum sharpness and weight range */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 @theme {
-  /* Set Inter as your primary sans font */
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  
-  /* Keeping your brand colors, but removing the "accent" font */
+  /* Font Families */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Global Brand Palette - The Million Dollar Theme */
   --color-royal-blue: #0755BB;
   --color-matte-charcoal: #1E1E1E;
   --color-electric-lime: #C1F701; 
   --color-cool-white: #F5F9FF;
+  --color-slate-50: #F8FAFC;
+
+  /* Standardized Spacing & Typography */
+  --tracking-body: -0.011em;
+  --tracking-header: -0.025em;
   
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -19,26 +23,31 @@
 }
 
 @layer base {
-  /* 🛠️ GLOBAL OVERFLOW FIX: Prevents the horizontal wobble/white bar on mobile */
-  html, body {
-    max-width: 100%;
-    overflow-x: hidden;
-    position: relative;
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    font-family: var(--font-sans);
-    background-color: white;
-    color: var(--color-matte-charcoal);
-    /* Improved legibility for Inter */
-    letter-spacing: -0.011em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply font-sans bg-white text-matte-charcoal antialiased overflow-x-hidden w-full;
+    letter-spacing: var(--tracking-body);
   }
 
-  /* Make sure headings use the negative letter-spacing Inter is famous for */
+  /* Typography Defaults */
   h1, h2, h3, h4 {
-    letter-spacing: -0.025em;
-    font-weight: 800;
-  } 
+    @apply font-black tracking-tight;
+  }
+
+  /* Custom Selection */
+  ::selection {
+    @apply bg-royal-blue/10 text-royal-blue;
+  }
+
+  /* Minimalist Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { 
+    @apply bg-slate-200 rounded-full transition-colors; 
+  }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-royal-blue/40; }
 }

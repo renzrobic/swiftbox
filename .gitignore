@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.env
+
+# Ignore sensitive keys
+backend/serviceAccountKey.json
+backend/.env
+web-portal/.env.local
+node_modules/

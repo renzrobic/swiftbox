@@ -1,39 +1,49 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async'; 
 
-// Global Components
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import ScrollToTop from './components/ScrollToTop';
+// Layouts & UI
+import MainLayout from './components/layout/MainLayout';
+import PageLoader from './components/ui/PageLoader'; // Make sure to move your loader here!
+import Error from './components/ui/Error'; 
 
-// Page Imports
-import Home from './pages/Home';
-import Tracker from './pages/Tracker';
-import Admin from './pages/Admin';
+// Lazy Loaded Pages
+const Home = lazy(() => import('./pages/Home'));
+const Tracker = lazy(() => import('./pages/Tracker'));
+const Admin = lazy(() => import('./pages/Admin'));
+const News = lazy(() => import('./pages/News'));
+const ArticleDetail = lazy(() => import('./pages/ArticleDetail'));
+const Product = lazy(() => import('./pages/Product')); // Fixed naming mismatch
 
 export default function App() {
   return (
     <Router>
-      <ScrollToTop />
-      
-      {/* 🟢 Site renders immediately without waiting for state */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex min-h-screen flex-col bg-white font-sans antialiased overflow-x-hidden"
-      >
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
+      <Helmet>
+        <title>Swiftbox | Smart Locker Technologies</title>
+        <meta name="description" content="Manage shipments and track packages in real-time with Swiftbox's advanced logistics portal." />
+        <link rel="canonical" href="https://swiftbox.online" />
+      </Helmet>
+
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          
+          {/* Public Routes with Navbar and Footer */}
+          <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/track" element={<Tracker />} />
-            <Route path="/admin" element={<Admin />} />
-          </Routes>
-        </main>
-        <Footer />
-      </motion.div>
+            <Route path="/news" element={<News />} /> 
+            <Route path="/news/:id" element={<ArticleDetail />} /> 
+            <Route path="/product" element={<Product />} /> 
+          </Route>
+
+          {/* Admin Routes (No public Navbar/Footer) */}
+          <Route path="/admin" element={<Admin />} />
+          
+          {/* Fallback */}
+          <Route path="*" element={<Error />} />
+
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

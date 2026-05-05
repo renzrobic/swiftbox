@@ -1,25 +1,28 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
-import Hero from '../components/Hero';
-import Mission from '../components/Mission';
-import Services from '../components/Services';
-import ProductAndPlatform from '../components/ProductAndPlatform';
-import ProductShowcase from '../components/ProductShowcase';
-import StoryCanvas from '../components/StoryCanvas';
-import SuccessStories from '../components/SuccessStories';
-import TeamAccordion from '../components/TeamAccordion';
-import FAQ from '../components/FAQ';
-import ScrollReveal from '../components/ScrollReveal';
+// Layout Components
+import ScrollReveal from '../components/layout/ScrollReveal';
+
+// Feature: Landing
+import Hero from '../features/landing/Hero';
+import Mission from '../features/landing/Mission';
+import Services from '../features/landing/Services';
+import SystemInfrastructure from '../features/landing/SystemInfrastructure'; // Formerly StoryCanvas
+import SuccessStories from '../features/landing/SuccessStories';
+import TeamAccordion from '../features/landing/TeamAccordion';
+import FAQ from '../features/landing/FAQ';
+
+// Feature: Product
+import SystemOverview from '../features/product/SystemOverview'; // Formerly ProductAndPlatform
+import TechnicalArchitecture from '../features/product/TechnicalArchitecture'; // Formerly ProductShowcase
+
+// Feature: News
+import RecentNews from '../features/news/RecentNews';
 
 export default function Home() {
   return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      transition={{ duration: 0.5 }}
-      className="bg-transparent w-full overflow-x-hidden"
-    >
+    <div className="relative min-h-screen">
+      {/* Hero renders immediately for LCP performance */}
       <Hero />
 
       <ScrollReveal>
@@ -31,28 +34,33 @@ export default function Home() {
       </ScrollReveal>
 
       <ScrollReveal>
-        <ProductAndPlatform />
+        <SystemOverview />
       </ScrollReveal>
-
-      {/* 🟢 Removed ScrollReveal from here because it's now inside the component to prevent background glitching */}
-      <ProductShowcase />
-
+      
+      {/* Architecture is typically large; keeping its internal reveal logic */}
+      <TechnicalArchitecture />
+      
       <ScrollReveal>
-        <StoryCanvas />
+        <SystemInfrastructure />
       </ScrollReveal>
 
-      <ScrollReveal noScale={true}>
+      {/* 📰 RECENT NEWS: The bridge to success stories */}
+      <ScrollReveal>
+        <RecentNews />
+      </ScrollReveal>
+
+      {/* Simplified boolean props for cleaner Section wrappers */}
+      <ScrollReveal noScale>
         <SuccessStories />
       </ScrollReveal>
 
-      {/* 🟢 TeamAccordion and FAQ use noScale={true} to stop the side-to-side jitter */}
-      <ScrollReveal noScale={true}>
+      <ScrollReveal noScale>
         <TeamAccordion />
       </ScrollReveal>
 
-      <ScrollReveal noScale={true}>
+      <ScrollReveal noScale>
         <FAQ />
       </ScrollReveal>
-    </motion.div>
+    </div>
   );
 }
