@@ -6,7 +6,7 @@ import securityImg from '../assets/tech/security_encryption_abstract.png';
 // Modular Feature Components
 import SecurityHero from '../features/product/security/SecurityHero';
 import SecurityManifest from '../features/product/security/SecurityManifest';
-import TechCTA from '../features/product/TechCTA';
+
 
 export default function SecurityTech() {
   return (
@@ -20,7 +20,7 @@ export default function SecurityTech() {
       <section className="px-6 md:px-12">
         <div className="mx-auto max-w-7xl">
           <ScrollReveal delay={0.2}>
-            <div className="group relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] bg-white shadow-2xl transition-all duration-1000 hover:shadow-ink/5">
+            <div className="group relative w-full overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-1000 hover:shadow-ink/5">
               <img
                 src={securityImg}
                 alt="Abstract representation of encryption"
@@ -34,7 +34,7 @@ export default function SecurityTech() {
 
       <SecurityManifest />
 
-      <TechCTA title="Secure your institution." buttonText="View Security Whitepaper" />
+
     </div>
   );
 }

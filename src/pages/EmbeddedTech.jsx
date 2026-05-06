@@ -6,7 +6,7 @@ import hardwareImg from '../assets/tech/embedded_tech_hardware.png';
 // Modular Feature Components
 import EmbeddedHero from '../features/product/embedded/EmbeddedHero';
 import EmbeddedManifest from '../features/product/embedded/EmbeddedManifest';
-import TechCTA from '../features/product/TechCTA';
+
 
 export default function EmbeddedTech() {
   return (
@@ -20,7 +20,7 @@ export default function EmbeddedTech() {
       <section className="px-6 md:px-12">
         <div className="mx-auto max-w-7xl">
           <ScrollReveal delay={0.2}>
-            <div className="group relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] bg-white shadow-2xl transition-all duration-1000 hover:shadow-ink/5">
+            <div className="group relative w-full overflow-hidden rounded-3xl  bg-white shadow-2xl transition-all duration-1000 hover:shadow-ink/5">
               <img
                 src={hardwareImg}
                 alt="Hardware logic board closeup"
@@ -34,7 +34,7 @@ export default function EmbeddedTech() {
 
       <EmbeddedManifest />
 
-      <TechCTA title="Build with SwiftBox." buttonText="Access Developer API" />
+
     </div>
   );
 }

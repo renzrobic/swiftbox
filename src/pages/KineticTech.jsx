@@ -6,7 +6,7 @@ import lockImage from '../assets/tech/kinetic_lock_render.png';
 // Modular Feature Components
 import KineticHero from '../features/product/kinetic/KineticHero';
 import KineticManifest from '../features/product/kinetic/KineticManifest';
-import TechCTA from '../features/product/TechCTA';
+
 
 export default function KineticTech() {
   return (
@@ -21,7 +21,7 @@ export default function KineticTech() {
       <section className="px-6 md:px-12">
         <div className="mx-auto max-w-7xl">
           <ScrollReveal delay={0.2}>
-            <div className="group relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] bg-white shadow-2xl transition-all duration-1000 hover:shadow-ink/5">
+            <div className="group relative w-full overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-1000 hover:shadow-ink/5">
               <img
                 src={lockImage}
                 alt="3D render of futuristic locking mechanism"
@@ -35,8 +35,7 @@ export default function KineticTech() {
 
       <KineticManifest />
 
-      {/* ── CTA FOOTER ── */}
-      <TechCTA title="Ready to deploy?" buttonText="Launch System Tracker" />
+
     </div>
   );
 }
