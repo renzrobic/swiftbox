@@ -72,7 +72,7 @@ export default function AdminForm() {
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-8 text-left shadow-sm lg:rounded-2xl">
-      <h2 className="mb-8 text-xl font-bold uppercase tracking-tight text-royal-blue">
+      <h2 className="mb-8 text-xl font-bold uppercase tracking-tight text-ink">
         Register
       </h2>
       
@@ -82,7 +82,7 @@ export default function AdminForm() {
           aria-label="Select Locker"
           value={formData.lockerId} 
           onChange={handleChange} 
-          className="w-full cursor-pointer appearance-none rounded-xl bg-slate-50 p-4 text-xs font-bold uppercase text-royal-blue outline-none"
+          className="w-full cursor-pointer appearance-none rounded-xl bg-slate-50 p-4 text-xs font-bold uppercase text-ink outline-none"
         >
           {['L01', 'L02', 'L03', 'L04'].map(id => (
             <option key={id} value={id}>Locker {id}</option>
@@ -97,7 +97,7 @@ export default function AdminForm() {
           spellCheck="false"
           value={formData.parcelId} 
           onChange={handleChange} 
-          className="w-full rounded-xl bg-slate-50 p-4 text-sm font-bold text-royal-blue outline-none placeholder:text-royal-blue/30" 
+          className="w-full rounded-xl bg-slate-50 p-4 text-sm font-bold text-ink outline-none placeholder:text-ink/30" 
           placeholder="PARCEL ID" 
         />
 
@@ -106,7 +106,7 @@ export default function AdminForm() {
           aria-label="Merchant or Sender Name"
           value={formData.sender} 
           onChange={handleChange} 
-          className="w-full rounded-xl bg-slate-50 p-4 text-sm font-bold text-royal-blue outline-none placeholder:text-royal-blue/30" 
+          className="w-full rounded-xl bg-slate-50 p-4 text-sm font-bold text-ink outline-none placeholder:text-ink/30" 
           placeholder="MERCHANT" 
         />
 
@@ -118,14 +118,14 @@ export default function AdminForm() {
           autoComplete="off"
           value={formData.phone} 
           onChange={handleChange} 
-          className="w-full rounded-xl bg-slate-50 p-4 text-sm font-bold text-royal-blue outline-none placeholder:text-royal-blue/30" 
+          className="w-full rounded-xl bg-slate-50 p-4 text-sm font-bold text-ink outline-none placeholder:text-ink/30" 
           placeholder="PHONE" 
         />
 
         <button 
           type="submit" 
           disabled={isSubmitting} 
-          className="mt-4 flex w-full items-center justify-center rounded-xl bg-royal-blue py-4 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-black active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 flex w-full items-center justify-center rounded-xl bg-ink py-4 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-black active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin" size={20} />

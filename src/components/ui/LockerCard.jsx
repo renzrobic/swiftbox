@@ -9,7 +9,7 @@ export default function LockerCard({ id, data }) {
     <motion.div 
       layout 
       className={`p-6 flex flex-col justify-between h-[260px] rounded-xl lg:rounded-2xl transition-all border-2 ${
-        isOccupied ? 'bg-royal-blue border-royal-blue text-white shadow-lg' : 'bg-white border-slate-100 text-royal-blue'
+        isOccupied ? 'bg-ink border-ink text-white shadow-lg' : 'bg-white border-ink/10 text-ink'
       }`}
     >
       <div>
@@ -20,7 +20,7 @@ export default function LockerCard({ id, data }) {
           {/* Added aria-hidden to decorative dot */}
           <div 
             aria-hidden="true" 
-            className={`h-2 w-2 rounded-full ${isOccupied ? 'bg-white animate-pulse' : 'bg-royal-blue/20'}`} 
+            className={`h-2 w-2 rounded-full ${isOccupied ? 'bg-white animate-pulse' : 'bg-ink/20'}`} 
           />
         </div>
         

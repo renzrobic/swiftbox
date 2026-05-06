@@ -10,7 +10,7 @@ export default function MainLayout() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen flex-col bg-white font-sans antialiased selection:bg-royal-blue/10"
+      className="flex min-h-screen flex-col bg-white font-sans antialiased selection:bg-ink/10"
     >
       <ScrollToTop />
       <Navbar />

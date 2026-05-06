@@ -5,12 +5,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {
-      colors: {
-        swiftBlue: '#1a237e',
-        swiftGold: '#ffc107',
-      }
-    },
+    extend: {},
   },
   plugins: [],
 }

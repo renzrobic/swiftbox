@@ -62,11 +62,11 @@ export default function AdminUsers() {
     <div className="space-y-8 text-left">
       {/* Header section */}
       <header className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-royal-blue uppercase">Team</h2>
+        <h2 className="text-2xl font-bold text-ink uppercase">Team</h2>
         <button 
           type="button"
           onClick={() => setIsModalOpen(true)} 
-          className="bg-royal-blue text-white px-6 py-3 rounded-xl lg:rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-md transition-all hover:bg-black active:scale-95"
+          className="bg-ink text-white px-6 py-3 rounded-xl lg:rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-md transition-all hover:bg-black active:scale-95"
         >
           Invite Member
         </button>
@@ -78,19 +78,19 @@ export default function AdminUsers() {
           <div 
             key={user.id} 
             role="listitem"
-            className="bg-white border border-slate-100 p-4 rounded-xl lg:rounded-2xl flex items-center justify-between transition-all hover:shadow-sm"
+            className="bg-white border border-ink/10 p-4 rounded-xl lg:rounded-2xl flex items-center justify-between transition-all hover:shadow-sm"
           >
             <div className="flex items-center gap-4">
               <div 
                 aria-hidden="true"
-                className="h-10 w-10 bg-royal-blue rounded-lg flex items-center justify-center text-white font-black uppercase text-xs"
+                className="h-10 w-10 bg-ink rounded-lg flex items-center justify-center text-white font-black uppercase text-xs"
               >
                 {user.name?.[0] || '?'}
               </div>
               <div>
-                <p className="font-bold text-sm text-slate-800">{user.name}</p>
-                <p className="text-[9px] font-black text-slate-300 uppercase tracking-wider">
-                  {user.role} • <span className="text-royal-blue/40">Key: {user.accessKey}</span>
+                <p className="font-bold text-sm text-ink">{user.name}</p>
+                <p className="text-[9px] font-black text-ink/30 uppercase tracking-wider">
+                  {user.role} • <span className="text-ink/40">Key: {user.accessKey}</span>
                 </p>
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function AdminUsers() {
               type="button"
               aria-label={`Remove ${user.name}`}
               onClick={() => remove(ref(db, `team/${user.id}`))} 
-              className="p-2 text-slate-200 hover:text-red-500 transition-colors"
+              className="p-2 text-ink/20 hover:text-red-500 transition-colors"
             >
               <Trash2 size={16} />
             </button>
@@ -110,7 +110,7 @@ export default function AdminUsers() {
       <AnimatePresence>
         {isModalOpen && (
           <div 
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-royal-blue/20 backdrop-blur-md p-4"
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-ink/20 backdrop-blur-md p-4"
             role="dialog"
             aria-modal="true"
           >
@@ -121,12 +121,12 @@ export default function AdminUsers() {
               className="bg-white w-full max-w-md rounded-xl lg:rounded-2xl p-8 shadow-2xl"
             >
               <div className="flex justify-between items-center mb-8">
-                <h3 className="text-xl font-bold text-royal-blue uppercase">Authorize User</h3>
+                <h3 className="text-xl font-bold text-ink uppercase">Authorize User</h3>
                 <button 
                   type="button"
                   aria-label="Close modal"
                   onClick={() => setIsModalOpen(false)} 
-                  className="text-slate-300 hover:text-royal-blue transition-colors"
+                  className="text-ink/30 hover:text-ink transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -140,7 +140,7 @@ export default function AdminUsers() {
                   value={currentMember.name} 
                   onChange={handleChange} 
                   placeholder="FULL NAME" 
-                  className="w-full bg-slate-50 rounded-xl p-4 font-bold text-royal-blue outline-none text-sm placeholder:text-royal-blue/30" 
+                  className="w-full bg-ink/5 rounded-xl p-4 font-bold text-ink outline-none text-sm placeholder:text-ink/30" 
                 />
                 <input 
                   required 
@@ -150,7 +150,7 @@ export default function AdminUsers() {
                   value={currentMember.email} 
                   onChange={handleChange} 
                   placeholder="EMAIL ADDRESS" 
-                  className="w-full bg-slate-50 rounded-xl p-4 font-bold text-royal-blue outline-none text-sm placeholder:text-royal-blue/30" 
+                  className="w-full bg-ink/5 rounded-xl p-4 font-bold text-ink outline-none text-sm placeholder:text-ink/30" 
                 />
                 <input 
                   name="accessKey" 
@@ -158,13 +158,13 @@ export default function AdminUsers() {
                   value={currentMember.accessKey} 
                   onChange={handleChange} 
                   placeholder="ACCESS KEY (OPTIONAL)" 
-                  className="w-full bg-slate-50 rounded-xl p-4 font-bold text-royal-blue outline-none text-sm placeholder:text-royal-blue/30" 
+                  className="w-full bg-ink/5 rounded-xl p-4 font-bold text-ink outline-none text-sm placeholder:text-ink/30" 
                 />
                 <select 
                   name="role" 
                   value={currentMember.role} 
                   onChange={handleChange} 
-                  className="w-full bg-slate-50 rounded-xl p-4 font-bold text-royal-blue outline-none text-xs uppercase cursor-pointer"
+                  className="w-full bg-ink/5 rounded-xl p-4 font-bold text-ink outline-none text-xs uppercase cursor-pointer"
                 >
                   <option value="Maintenance">Maintenance</option>
                   <option value="Operations">Operations</option>
@@ -174,7 +174,7 @@ export default function AdminUsers() {
                 <button 
                   type="submit" 
                   disabled={loading} 
-                  className="w-full bg-royal-blue text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 transition-all hover:bg-black disabled:opacity-50"
+                  className="w-full bg-ink text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 transition-all hover:bg-black disabled:opacity-50"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : "Authorize User"}
                 </button>

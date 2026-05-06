@@ -31,28 +31,56 @@ export default function MonitoringGrid({ lockers }) {
         </AnimatePresence>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:rounded-2xl">
-        <div className="space-y-2">
-          <div className="grid grid-cols-4 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-400">
-            <span>ID</span>
-            <span>Node</span>
-            <span>Merchant</span>
-            <span className="text-right">Status</span>
-          </div>
+      <div className="rounded-xl border border-ink/10 bg-white p-4 md:p-6 shadow-sm lg:rounded-2xl">
+        <div className="space-y-4">
+          <h3 className="px-2 text-[9px] font-black uppercase tracking-[0.3em] text-ink/40">Live Traffic Logs</h3>
           
-          {RECENT_LOGS.map((log) => (
-            <div 
-              key={log.id} 
-              className="grid grid-cols-4 border-t border-slate-50 px-4 py-3 text-[11px] font-bold text-slate-700 transition-colors hover:bg-slate-50"
-            >
-              <span className="font-mono text-royal-blue">{log.id}</span>
-              <span>{log.node}</span>
-              <span className="truncate">{log.merchant}</span>
-              <span className={`text-right ${log.status === 'CLAIMED' ? 'text-green-500' : 'text-royal-blue'}`}>
-                {log.status}
-              </span>
+          {/* Desktop Table View */}
+          <div className="hidden md:block">
+            <div className="grid grid-cols-4 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-ink/40">
+              <span>ID</span>
+              <span>Node</span>
+              <span>Merchant</span>
+              <span className="text-right">Status</span>
             </div>
-          ))}
+            {RECENT_LOGS.map((log) => (
+              <div 
+                key={log.id} 
+                className="grid grid-cols-4 border-t border-ink/5 px-4 py-3 text-[11px] font-bold text-ink transition-colors hover:bg-ink/5"
+              >
+                <span className="font-mono text-ink">{log.id}</span>
+                <span>{log.node}</span>
+                <span className="truncate">{log.merchant}</span>
+                <span className={`text-right ${log.status === 'CLAIMED' ? 'text-green-500' : 'text-ink'}`}>
+                  {log.status}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {RECENT_LOGS.map((log) => (
+              <div key={log.id} className="flex flex-col gap-2 rounded-xl border border-ink/10 bg-ink/5 p-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-mono text-[10px] font-bold text-ink">{log.id}</span>
+                  <span className={`text-[9px] font-black uppercase tracking-widest ${log.status === 'CLAIMED' ? 'text-green-600' : 'text-ink/60'}`}>
+                    {log.status}
+                  </span>
+                </div>
+                <div className="flex justify-between items-end">
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-ink/40">Merchant</span>
+                    <span className="text-xs font-bold text-ink">{log.merchant}</span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-ink/40">Node</span>
+                    <span className="text-xs font-bold text-ink">{log.node}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

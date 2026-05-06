@@ -18,20 +18,20 @@ export default function Error({
     >
       {/* Visual Error Display */}
       <div className="relative mb-4 md:mb-6">
-        {/* Large Header: font-semibold & royal-blue/5 */}
-        <h1 className="text-[6rem] sm:text-[10rem] md:text-[15rem] font-semibold leading-none text-royal-blue/5 select-none">
+        {/* Large Header: font-semibold & ink/5 */}
+        <h1 className="text-[6rem] sm:text-[10rem] md:text-[15rem] font-semibold leading-none text-ink/5 select-none">
           {code}
         </h1>
         <div className="absolute inset-0 flex items-center justify-center">
-          <AlertTriangle className="text-royal-blue w-10 h-10 md:w-16 md:h-16" />
+          <AlertTriangle className="text-ink w-10 h-10 md:w-16 md:h-16" />
         </div>
       </div>
 
       {/* Content */}
-      <h2 className="mb-2 text-xl md:text-4xl font-semibold uppercase tracking-tighter text-royal-blue">
+      <h2 className="mb-2 text-xl md:text-4xl font-semibold uppercase tracking-tighter text-ink">
         {title}
       </h2>
-      <p className="mb-8 md:mb-10 max-w-[280px] sm:max-w-sm text-xs md:text-sm font-bold leading-relaxed text-royal-blue/60">
+      <p className="mb-8 md:mb-10 max-w-[280px] sm:max-w-sm text-xs md:text-sm font-bold leading-relaxed text-ink/60">
         {message}
       </p>
 
@@ -39,7 +39,7 @@ export default function Error({
       <div className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full sm:w-auto">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center justify-center gap-2 rounded-full border border-royal-blue/20 px-8 py-4 sm:py-3 text-[10px] font-bold uppercase tracking-widest text-royal-blue transition-all hover:bg-royal-blue hover:text-white active:scale-95"
+          className="flex items-center justify-center gap-2 rounded-full border border-ink/20 px-8 py-4 sm:py-3 text-[10px] font-bold uppercase tracking-widest text-ink transition-all hover:bg-ink hover:text-white active:scale-95"
         >
           <ArrowLeft size={14} />
           Go Back
@@ -47,7 +47,7 @@ export default function Error({
         
         <Link
           to="/"
-          className="flex items-center justify-center gap-2 rounded-full bg-royal-blue px-8 py-4 sm:py-3 text-[10px] font-bold uppercase tracking-widest text-white transition-all hover:opacity-90 shadow-xl shadow-royal-blue/20 active:scale-95"
+          className="flex items-center justify-center gap-2 rounded-full bg-ink px-8 py-4 sm:py-3 text-[10px] font-bold uppercase tracking-widest text-white transition-all hover:opacity-90 shadow-xl shadow-ink/20 active:scale-95"
         >
           <Home size={14} />
           Home Base

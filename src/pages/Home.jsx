@@ -25,42 +25,26 @@ export default function Home() {
       {/* Hero renders immediately for LCP performance */}
       <Hero />
 
-      <ScrollReveal>
-        <Mission />
-      </ScrollReveal>
+      <Mission />
 
-      <ScrollReveal>
-        <Services />
-      </ScrollReveal>
+      <Services />
 
-      <ScrollReveal>
-        <SystemOverview />
-      </ScrollReveal>
+      <SystemOverview />
       
       {/* Architecture is typically large; keeping its internal reveal logic */}
       <TechnicalArchitecture />
       
-      <ScrollReveal>
-        <SystemInfrastructure />
-      </ScrollReveal>
+      <SystemInfrastructure />
 
       {/* 📰 RECENT NEWS: The bridge to success stories */}
-      <ScrollReveal>
-        <RecentNews />
-      </ScrollReveal>
+      <RecentNews />
 
       {/* Simplified boolean props for cleaner Section wrappers */}
-      <ScrollReveal noScale>
-        <SuccessStories />
-      </ScrollReveal>
+      <SuccessStories />
 
-      <ScrollReveal noScale>
-        <TeamAccordion />
-      </ScrollReveal>
+      <TeamAccordion />
 
-      <ScrollReveal noScale>
-        <FAQ />
-      </ScrollReveal>
+      <FAQ />
     </div>
   );
 }

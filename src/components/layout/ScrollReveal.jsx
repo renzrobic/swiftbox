@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion /*, useReducedMotion */ } from 'framer-motion';
 
-export default function ScrollReveal({ children, delay = 0, noScale = false }) {
+export default function ScrollReveal({ children, delay = 0, noScale = false, className = "w-full", style }) {
   // const shouldReduceMotion = useReducedMotion(); 
   // TIP: If you want to go the extra mile for a11y, 
   // you can use this hook to disable animations for users with motion sensitivity.
@@ -30,9 +30,10 @@ export default function ScrollReveal({ children, delay = 0, noScale = false }) {
       }}
       /* 
          🚀 DEVELOPER NOTE: 'w-full' ensures the wrapper doesn't shrink, 
-         but if this breaks your layout, use 'display: contents' in the style prop.
+         but if this breaks your layout, override className or use 'display: contents' in the style prop.
       */
-      className="w-full"
+      className={className}
+      style={style}
     >
       {children}
     </motion.div>

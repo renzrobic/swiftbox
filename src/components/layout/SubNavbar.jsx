@@ -51,10 +51,10 @@ export default function SubNavbar() {
 
   return (
     /* 🛠️ RESPONSIVE STICKY TOP: Handles 50px mobile / 60px desktop */
-    <div className="sticky top-[80px] md:top-[60px] z-[100] w-full bg-white border-b border-slate-100">
+    <div className="sticky top-[80px] md:top-[60px] z-[100] w-full bg-white border-b border-ink/10">
       <div className="no-scrollbar w-full overflow-x-auto">
         <div className="flex min-w-max items-center px-6 py-3 md:justify-center md:px-10">
-          <nav className="flex items-center gap-1 rounded-full bg-slate-100/50 p-1" aria-label="Page Sections">
+          <nav className="flex items-center gap-1 rounded-full bg-ink/5 p-1" aria-label="Page Sections">
             {NAV_ITEMS.map((item) => (
               <button
                 key={item.id}
@@ -62,14 +62,14 @@ export default function SubNavbar() {
                 aria-current={activeId === item.id ? 'true' : 'false'}
                 onClick={() => scrollToSection(item.id)}
                 className={`relative px-5 py-2 text-xs md:text-sm font-medium tracking-tight transition-colors duration-300 whitespace-nowrap ${
-                  activeId === item.id ? 'text-white' : 'text-royal-blue/60 hover:text-royal-blue'
+                  activeId === item.id ? 'text-white' : 'text-ink/60 hover:text-ink'
                 }`}
               >
                 <span className="relative z-10">{item.label}</span>
                 {activeId === item.id && (
                   <motion.div
                     layoutId="subActivePill"
-                    className="absolute inset-0 z-0 rounded-full bg-royal-blue"
+                    className="absolute inset-0 z-0 rounded-full bg-ink active-glow"
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                 )}

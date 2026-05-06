@@ -15,11 +15,11 @@ export default function LogisticsDashboard() {
       
       <section className="grid grid-cols-2 gap-4 md:grid-cols-4" aria-label="System Quick Metrics">
         {QUICK_METRICS.map((stat) => (
-          <div key={stat.label} className="rounded-xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md lg:rounded-2xl">
-            <p className="mb-1 text-[9px] font-black uppercase tracking-widest text-slate-400">
+          <div key={stat.label} className="rounded-xl border border-ink/10 bg-white p-6 shadow-sm transition-all hover:shadow-md lg:rounded-2xl">
+            <p className="mb-1 text-[9px] font-black uppercase tracking-widest text-ink/40">
               {stat.label}
             </p>
-            <p className="text-2xl font-bold leading-none tracking-tighter text-royal-blue">
+            <p className="text-2xl font-bold leading-none tracking-tighter text-ink">
               {stat.val}
             </p>
           </div>
@@ -32,15 +32,15 @@ export default function LogisticsDashboard() {
         <aside className="order-2 lg:col-span-4 lg:order-1" aria-label="Registration Form Container">
           <div className="lg:sticky lg:top-32">
             
-            <div className="mb-8 border-b-2 border-royal-blue/30 pb-4">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-royal-blue">
+            <div className="mb-8 border-b-2 border-ink/30 pb-4">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink">
                 Registration
               </h3>
             </div>
             
             <AdminForm />
             
-            <p role="status" className="mt-6 text-center text-[9px] font-bold uppercase tracking-widest text-royal-blue/30">
+            <p role="status" className="mt-6 text-center text-[9px] font-bold uppercase tracking-widest text-ink/30">
               Terminal Session: Secured
             </p>
           </div>

@@ -8,6 +8,7 @@ import SubNavbar from '../components/layout/SubNavbar';
 // Feature: Product
 import SystemCarousel from '../features/product/SystemCarousel';
 import InteractiveArchitecture from '../features/product/InteractiveArchitecture';
+import PlatformEcosystem from '../features/product/PlatformEcosystem';
 import TechnicalResearch from '../features/product/TechnicalResearch';
 
 export default function Product() {
@@ -26,16 +27,17 @@ export default function Product() {
 
       {/* 🛠️ ARCHITECTURE SECTION: Interactive Simulation */}
       <div id="architecture" className="scroll-mt-32">
-        <ScrollReveal>
-          <InteractiveArchitecture />
-        </ScrollReveal>
+        <InteractiveArchitecture />
       </div>
 
-      {/* RESEARCH SECTION */}
+      {/* 🔬 RESEARCH SECTION */}
       <div id="research" className="scroll-mt-32">
-        <ScrollReveal noScale>
-          <TechnicalResearch />
-        </ScrollReveal>
+        <TechnicalResearch />
+      </div>
+
+      {/* 🌐 ECOSYSTEM SECTION: Bento Grid */}
+      <div id="ecosystem" className="scroll-mt-32">
+        <PlatformEcosystem />
       </div>
     </div>
   );

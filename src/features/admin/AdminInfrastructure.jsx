@@ -18,8 +18,8 @@ const MAINTENANCE_LOGS = [
 const StatItem = memo(({ icon: Icon, value, label }) => {
   return (
     <div className="flex items-center gap-1.5" aria-label={`${label}: ${value}`}>
-      <Icon size={12} className="text-slate-200" aria-hidden="true" />
-      <span className="text-[9px] font-bold text-royal-blue">{value}</span>
+      <Icon size={12} className="text-ink/20" aria-hidden="true" />
+      <span className="text-[9px] font-bold text-ink">{value}</span>
     </div>
   );
 });
@@ -28,7 +28,7 @@ export default function AdminInfrastructure() {
   return (
     <section className="space-y-6 md:space-y-10 text-left w-full overflow-hidden">
       <div>
-        <h2 className="text-2xl font-bold text-royal-blue uppercase">Infrastructure</h2>
+        <h2 className="text-2xl font-bold text-ink uppercase">Infrastructure</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
@@ -36,7 +36,7 @@ export default function AdminInfrastructure() {
         <div className="lg:col-span-8 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {NODES.map((node) => (
-              <div key={node.name} className="bg-white border border-slate-100 p-6 rounded-xl lg:rounded-2xl shadow-sm hover:border-royal-blue/20 transition-all">
+              <div key={node.name} className="bg-white border border-ink/10 p-6 rounded-xl lg:rounded-2xl shadow-sm hover:border-ink/20 transition-all">
                 <div className="flex justify-between items-center mb-8">
                   <span 
                     className={`text-[8px] font-black uppercase px-2 py-1 rounded-md ${
@@ -53,10 +53,10 @@ export default function AdminInfrastructure() {
                   </div>
                 </div>
                 
-                <h4 className="text-lg font-bold text-royal-blue leading-none uppercase tracking-tight">
+                <h4 className="text-lg font-bold text-ink leading-none uppercase tracking-tight">
                   {node.name}
                 </h4>
-                <p className="text-[9px] font-black text-slate-300 uppercase mt-2">
+                <p className="text-[9px] font-black text-ink/30 uppercase mt-2">
                   {node.location}
                 </p>
               </div>
@@ -65,17 +65,17 @@ export default function AdminInfrastructure() {
         </div>
 
         {/* Maintenance Log Sidebar */}
-        <aside className="lg:col-span-4 bg-white border border-slate-100 rounded-xl lg:rounded-2xl p-6 shadow-sm h-fit">
+        <aside className="lg:col-span-4 bg-white border border-ink/10 rounded-xl lg:rounded-2xl p-6 shadow-sm h-fit">
           <div className="flex items-center gap-2 mb-8">
-            <Wrench size={14} className="text-royal-blue opacity-30" aria-hidden="true" />
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-royal-blue">Queue</h3>
+            <Wrench size={14} className="text-ink opacity-30" aria-hidden="true" />
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-ink">Queue</h3>
           </div>
           
           <div className="space-y-6">
             {MAINTENANCE_LOGS.map((log) => (
-              <div key={`${log.target}-${log.task}`} className="border-l-2 border-slate-50 pl-4 py-0.5">
-                <p className="text-xs font-bold text-slate-700 leading-tight">{log.task}</p>
-                <p className="text-[9px] font-black text-slate-300 uppercase mt-1">
+              <div key={`${log.target}-${log.task}`} className="border-l-2 border-ink/5 pl-4 py-0.5">
+                <p className="text-xs font-bold text-ink leading-tight">{log.task}</p>
+                <p className="text-[9px] font-black text-ink/30 uppercase mt-1">
                   {log.target} • {log.time}
                 </p>
               </div>

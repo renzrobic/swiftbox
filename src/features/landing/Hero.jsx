@@ -46,7 +46,7 @@ export default function Hero() {
           <div className="mb-4 flex-shrink-0 md:w-auto">
             <Link 
               to="/track"
-              className="group flex items-center justify-center gap-4 rounded-full bg-white px-6 py-2 text-base font-semibold text-royal-blue shadow-2xl transition-all duration-300 hover:bg-royal-blue hover:text-white active:scale-95 md:px-6 md:py-2 md:text-lg"
+              className="group flex items-center justify-center gap-4 rounded-full bg-white px-6 py-2 text-base font-semibold text-ink shadow-2xl transition-all duration-300 hover:bg-ink hover:text-white active:scale-95 md:px-6 md:py-2 md:text-lg btn-ai-glow"
             >
               Track Parcel
             </Link>
