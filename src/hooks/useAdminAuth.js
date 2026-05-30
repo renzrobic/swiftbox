@@ -53,7 +53,11 @@ export function useAdminAuth() {
 
     } catch (err) {
       console.error("Auth Sync Error:", err);
-      alert("TERMINAL SYNC ERROR");
+      if (err.code === 'auth/network-request-failed' || err.message?.includes('network')) {
+        alert("NETWORK ERROR: Cannot connect to SwiftBox Terminal. Please check your connection.");
+      } else {
+        alert(`TERMINAL SYNC ERROR: ${err.message || 'Unknown error occurred.'}`);
+      }
       return false;
     } finally {
       setLoading(false);

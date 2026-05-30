@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { secureApi } from '../../services/api';
+import { ref, set } from 'firebase/database';
+import { db } from '../../config/firebase';
 
 const INITIAL_FORM = { 
   lockerId: 'L01', 
@@ -32,12 +33,24 @@ export default function AdminForm() {
     setIsSubmitting(true);
 
     try {
-      // 🛡️ SECURE: Send to backend instead of direct DB write
-      await secureApi.post('/api/register-parcel', {
-        parcelId: id,
+      // 🚀 DIRECT DB WRITE: Bypass backend proxy, leverages Firebase Rules
+      await set(ref(db, `parcels/${id}`), {
+        parcel_id: id,
         sender: formData.sender || "Authorized Merchant",
-        phone: formData.phone,
-        dimensions: "Standard" // Default or add to form
+        recipient_phone: formData.phone,
+        dimensions: "Standard",
+        status: "SHIPPING",
+        location: "Manila Gateway Hub",
+        coords: [14.5995, 120.9842],
+        lockerId: "TBA",
+        timestamp: Date.now(),
+        history: [{
+          status: 'Processed',
+          location: "Manila Gateway Hub",
+          coords: [14.5995, 120.9842],
+          time: Date.now(),
+          current: true
+        }]
       });
 
       alert(`AUTHORIZED: ${id} registered successfully.`);
@@ -50,10 +63,9 @@ export default function AdminForm() {
     }
   };
 
-
   return (
-    <div className="rounded-[1.5rem] border border-ink/10 bg-white p-8 text-left shadow-sm">
-      <h2 className="mb-8 text-xl font-semibold text-ink">
+    <div className="rounded-xl border border-ink/10 bg-white p-6 md:p-8 text-left shadow-sm">
+      <h2 className="mb-6 text-xl font-semibold text-ink">
         Register Parcel
       </h2>
       
@@ -64,7 +76,7 @@ export default function AdminForm() {
             aria-label="Select Locker"
             value={formData.lockerId} 
             onChange={handleChange} 
-            className="w-full cursor-pointer appearance-none rounded-xl bg-ink/5 p-4 text-xs font-semibold text-ink outline-none border border-transparent focus:border-ink/10"
+            className="w-full cursor-pointer appearance-none rounded-lg bg-ink/5 p-4 text-xs font-semibold text-ink outline-none border border-transparent focus:border-ink/10"
           >
             {['L01', 'L02', 'L03', 'L04'].map(id => (
               <option key={id} value={id}>Locker {id}</option>
@@ -80,7 +92,7 @@ export default function AdminForm() {
           spellCheck="false"
           value={formData.parcelId} 
           onChange={handleChange} 
-          className="w-full rounded-xl bg-ink/5 p-4 text-sm font-semibold text-ink outline-none placeholder:text-ink/30 border border-transparent focus:border-ink/10" 
+          className="w-full rounded-lg bg-ink/5 p-4 text-sm font-semibold text-ink outline-none placeholder:text-ink/30 border border-transparent focus:border-ink/10" 
           placeholder="Parcel ID" 
         />
 
@@ -89,7 +101,7 @@ export default function AdminForm() {
           aria-label="Merchant or Sender Name"
           value={formData.sender} 
           onChange={handleChange} 
-          className="w-full rounded-xl bg-ink/5 p-4 text-sm font-semibold text-ink outline-none placeholder:text-ink/30 border border-transparent focus:border-ink/10" 
+          className="w-full rounded-lg bg-ink/5 p-4 text-sm font-semibold text-ink outline-none placeholder:text-ink/30 border border-transparent focus:border-ink/10" 
           placeholder="Merchant / Sender" 
         />
 
@@ -101,14 +113,14 @@ export default function AdminForm() {
           autoComplete="off"
           value={formData.phone} 
           onChange={handleChange} 
-          className="w-full rounded-xl bg-ink/5 p-4 text-sm font-semibold text-ink outline-none placeholder:text-ink/30 border border-transparent focus:border-ink/10" 
+          className="w-full rounded-lg bg-ink/5 p-4 text-sm font-semibold text-ink outline-none placeholder:text-ink/30 border border-transparent focus:border-ink/10" 
           placeholder="Recipient Phone" 
         />
 
         <button 
           type="submit" 
           disabled={isSubmitting} 
-          className="mt-4 flex w-full items-center justify-center rounded-full bg-ink py-4 text-xs font-semibold tracking-wider text-white transition-all hover:bg-black active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 btn-ai-glow"
+          className="mt-6 flex w-full items-center justify-center rounded-lg bg-ink py-4 text-xs font-semibold tracking-wider text-white transition-all hover:bg-black active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin" size={20} />

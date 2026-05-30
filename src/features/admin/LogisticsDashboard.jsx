@@ -15,23 +15,40 @@ export default function LogisticsDashboard() {
   const [lockers, setLockers] = useState({});
 
   useEffect(() => {
-    const rootRef = ref(db, '/');
-    const unsubscribe = onValue(rootRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      const parcelsCount = Object.keys(data.parcels || {}).length - 1;
-      const occupiedLockersCount = Object.values(data.lockers || {}).filter(l => l.status === 'OCCUPIED').length;
-      const team = Object.keys(data.team || {}).length;
+    let isMounted = true;
 
-      setLockers(data.lockers || {});
-      setMetrics({
-        parcels: parcelsCount < 0 ? 0 : parcelsCount,
-        activeLockers: occupiedLockersCount,
-        teamSize: team,
-        loading: false
-      });
-    });
+    const parcelsRef = ref(db, 'parcels');
+    const lockersRef = ref(db, 'lockers');
+    const teamRef = ref(db, 'team');
 
-    return () => unsubscribe();
+    const unsubParcels = onValue(parcelsRef, (snap) => {
+      if (!isMounted) return;
+      const data = snap.val() || {};
+      // Filter out dummy initialization records if any
+      const count = Object.keys(data).filter(k => k !== '_init').length;
+      setMetrics(prev => ({ ...prev, parcels: count, loading: false }));
+    }, (error) => console.error("Error fetching parcels:", error));
+
+    const unsubLockers = onValue(lockersRef, (snap) => {
+      if (!isMounted) return;
+      const data = snap.val() || {};
+      const active = Object.values(data).filter(l => l.status === 'OCCUPIED').length;
+      setLockers(data);
+      setMetrics(prev => ({ ...prev, activeLockers: active, loading: false }));
+    }, (error) => console.error("Error fetching lockers:", error));
+
+    const unsubTeam = onValue(teamRef, (snap) => {
+      if (!isMounted) return;
+      const data = snap.val() || {};
+      setMetrics(prev => ({ ...prev, teamSize: Object.keys(data).filter(k => k !== '_init').length, loading: false }));
+    }, (error) => console.error("Error fetching team:", error));
+
+    return () => {
+      isMounted = false;
+      unsubParcels();
+      unsubLockers();
+      unsubTeam();
+    };
   }, []);
 
   const QUICK_METRICS = [
@@ -46,7 +63,7 @@ export default function LogisticsDashboard() {
       
       <section className="grid grid-cols-2 gap-4 md:grid-cols-4" aria-label="System Quick Metrics">
         {QUICK_METRICS.map((stat) => (
-          <div key={stat.label} className="rounded-xl border border-ink/10 bg-white p-6 shadow-sm transition-all hover:shadow-md lg:rounded-2xl">
+          <div key={stat.label} className="rounded-xl border border-ink/10 bg-white p-6 shadow-sm transition-all hover:shadow-md">
             <p className="mb-1 text-[9px] font-semibold tracking-wider text-ink/80">
               {stat.label}
             </p>
@@ -59,7 +76,7 @@ export default function LogisticsDashboard() {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         
-        {/* Registration Sidebar (Formerly RegistrationColumn.jsx) */}
+        {/* Registration Sidebar */}
         <aside className="order-2 lg:col-span-4 lg:order-1" aria-label="Registration Form Container">
           <div className="lg:sticky lg:top-32">
             

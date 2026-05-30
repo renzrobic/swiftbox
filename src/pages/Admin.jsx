@@ -80,10 +80,10 @@ export default function Admin() {
                   key={item.id}
                   onClick={() => setCurrentTab(item.id)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-xs font-semibold transition-all lg:rounded-2xl ${isActive
-                    ? 'bg-ink text-white shadow-lg shadow-ink/10 btn-ai-glow'
+                  className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-xs font-semibold transition-all ${isActive
+                    ? 'bg-ink text-white shadow-md'
                     : 'text-ink/40 hover:bg-ink/5'
-                    } shadow-sm border border-transparent`}
+                    } border border-transparent`}
                 >
                   <item.icon size={16} aria-hidden="true" />
                   {item.label}
@@ -95,7 +95,7 @@ export default function Admin() {
 
         <button
           onClick={logout}
-          className="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-semibold tracking-wider text-red-500 transition-all hover:bg-red-50 lg:rounded-2xl"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-semibold tracking-wider text-red-500 transition-all hover:bg-red-50"
         >
           <Power size={16} aria-hidden="true" /> Exit Session
         </button>
@@ -122,7 +122,7 @@ export default function Admin() {
                 key={item.id}
                 onClick={() => setCurrentTab(item.id)}
                 className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[10px] font-semibold tracking-wider transition-all ${isActive
-                  ? 'bg-ink text-white shadow-lg shadow-ink/10 btn-ai-glow'
+                  ? 'bg-ink text-white shadow-md'
                   : 'bg-ink/5 text-ink/40 border border-ink/5'
                   }`}
               >
