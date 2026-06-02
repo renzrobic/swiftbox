@@ -4,42 +4,49 @@ import { motion, AnimatePresence } from 'framer-motion';
 // so this file stays clean and readable.
 import { useScrollVisibility } from '../../hooks/useScrollVisibility'; 
 
+import img1 from '../../assets/logistics_delivery.png';
+import img2 from '../../assets/hardware_actuation.png';
+import img3 from '../../assets/qr_verification.png';
+import img4 from '../../assets/cloud_sync.png';
+import img5 from '../../assets/high_speed_logistics.png';
+import img6 from '../../assets/digital_divide.png';
+
 const SYSTEM_SLIDES = [
   { 
     id: "logistics", 
     title: <>Drop and <br />Go Protocol.</>, 
     desc: "Shifting the delivery paradigm from synchronous to asynchronous, eliminating the 15-minute courier wait time for recipients.", 
-    video: "" 
+    image: img1 
   },
   { 
     id: "hardware", 
     title: <>Hardware <br />Meets Actuation.</>, 
     desc: "Integrated iPad kiosks scan credentials while ESP32 microcontrollers trigger 12V electromagnetic solenoid locks.", 
-    video: "" 
+    image: img2 
   },
   { 
     id: "security", 
     title: <>Dynamic <br />QR Verification.</>, 
     desc: "One-Time Use dynamic QR codes valid for a single transaction to prevent replay attacks and secure personal assets.", 
-    video: "" 
+    image: img3 
   },
   { 
     id: "infrastructure", 
     title: <>Cloud <br />Sync Logic.</>, 
     desc: "Real-time synchronization with Firebase Realtime Database ensures authentication tokens are specific to both recipient and compartment.", 
-    video: "" 
+    image: img4 
   },
   { 
     id: "efficiency", 
     title: <>Sub-Second <br />End-to-End Latency.</>, 
     desc: "Engineered for high-speed logistics, optimizing daily delivery quotas by solving last-mile delivery bottlenecks for couriers.", 
-    video: "" 
+    image: img5 
   },
   { 
     id: "future", 
     title: <>Bridging <br />The Digital Divide.</>, 
     desc: "Bringing metropolitan-grade smart locker infrastructure to provincial academic and corporate sectors.", 
-    video: "" 
+    image: img6 
   }
 ];
 
@@ -74,11 +81,11 @@ export default function SystemCarousel() {
               transition={{ duration: 1, ease: "easeOut" }}
               className="h-full w-full"
             >
-              {SYSTEM_SLIDES[current].video ? (
-                <video 
-                  autoPlay muted loop playsInline 
+              {SYSTEM_SLIDES[current].image ? (
+                <img 
+                  alt={SYSTEM_SLIDES[current].id}
                   className="h-full w-full object-cover grayscale-[0.2]" 
-                  src={SYSTEM_SLIDES[current].video} 
+                  src={SYSTEM_SLIDES[current].image} 
                 />
               ) : (
                 <div className="h-full w-full bg-[#0a0a0a]" />
@@ -111,21 +118,6 @@ export default function SystemCarousel() {
               </motion.p>
 
 
-              {/* 5. STACKING BUTTONS: flex-col for mobile, sm:flex-row for desktop */}
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="flex flex-col gap-4 sm:flex-row"
-              >
-                <button type="button" className="w-full rounded-full bg-white px-8 py-3 text-sm font-semibold text-ink shadow-apple-lg transition-all hover:bg-ink hover:text-white active:scale-95 sm:w-auto md:text-base btn-ai-glow">
-                  Try Protocol
-                </button>
-
-                <button type="button" className="w-full rounded-full border border-white/70 bg-transparent px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-white hover:text-ink active:scale-95 sm:w-auto md:text-base btn-ai-glow">
-                  Technical Report
-                </button>
-              </motion.div>
             </div>
           </div>
         </motion.div>
