@@ -1,76 +1,116 @@
-import { useState } from 'react';
-import { db, auth } from '../config/firebase'; // Ensure correct path to your firebase config
-import { ref, get, child } from 'firebase/database';
-import { signInAnonymously, signOut } from 'firebase/auth';
+import { useState, useEffect, useCallback } from 'react';
+import { api } from '../services/api';
 
 export function useAdminAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); 
-  const [userSession, setUserSession] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!api.getToken()); 
+  const [userSession, setUserSession] = useState(() => api.getUser());
   const [loading, setLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
-  const authorize = async (passInput) => {
-    if (!passInput) return false;
+  // Restore & verify session on mount
+  useEffect(() => {
+    let isMounted = true;
+
+    const restoreSession = async () => {
+      const token = api.getToken();
+      if (!token) {
+        if (isMounted) setIsInitializing(false);
+        return;
+      }
+
+      try {
+        const profile = await api.get('/api/v1/auth/me');
+        if (isMounted) {
+          setUserSession(profile);
+          setIsAuthenticated(true);
+        }
+      } catch (err) {
+        // Token is expired or invalid
+        console.warn("Session expired or invalid:", err.message);
+        api.clearSession();
+        if (isMounted) {
+          setIsAuthenticated(false);
+          setUserSession(null);
+        }
+      } finally {
+        if (isMounted) setIsInitializing(false);
+      }
+    };
+
+    restoreSession();
+
+    // Listen for unauthorized events from any API call
+    const unsubscribe = api.onUnauthorized(() => {
+      if (isMounted) {
+        setIsAuthenticated(false);
+        setUserSession(null);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, []);
+
+  const authorize = useCallback(async (passInput) => {
+    const key = passInput ? passInput.trim() : '';
+    if (!key) {
+      alert("Please enter your Access Key.");
+      return false;
+    }
+
     setLoading(true);
     
     try {
-      // SECURITY FIX: Never hardcode passwords in the frontend! 
-      // Add VITE_ROOT_PASS="Schnauzer2K@" to your .env.local file
-      const ROOT_PASS = import.meta.env.VITE_ROOT_PASS || "DEV_OVERRIDE_KEY";
+      // 🛡️ SECURE BACKEND AUTH: Server validates bcrypt/key and issues signed JWT
+      const response = await api.post('/api/v1/auth/login', { accessKey: key });
       
-      let isAuthorized = false;
-      let sessionData = null;
-
-      if (passInput === ROOT_PASS) {
-        sessionData = { name: "Root", role: "Super Admin" };
-        isAuthorized = true;
-      } else {
-        const dbRef = ref(db);
-        const snapshot = await get(child(dbRef, 'team'));
-        
-        if (snapshot.exists()) {
-          const teamData = snapshot.val();
-          const authorizedMember = Object.values(teamData).find(
-            member => member.accessKey === passInput
-          );
-          
-          if (authorizedMember) {
-            sessionData = authorizedMember;
-            isAuthorized = true;
-          }
-        }
+      const { token, user } = response;
+      if (!token || !user) {
+        throw new Error("Invalid authentication payload received from server.");
       }
 
-      if (isAuthorized) {
-        // 🚀 LINK TO FIREBASE SECURITY: Sign in anonymously to enable rules
-        await signInAnonymously(auth);
-        setUserSession(sessionData);
-        setIsAuthenticated(true);
-        return true;
-      } else {
-        alert("ACCESS DENIED: Invalid Terminal Key");
-        return false;
-      }
+      api.setSession(token, user);
+      setUserSession(user);
+      setIsAuthenticated(true);
+      return true;
 
     } catch (err) {
-      console.error("Auth Sync Error:", err);
-      if (err.code === 'auth/network-request-failed' || err.message?.includes('network')) {
-        alert("NETWORK ERROR: Cannot connect to SwiftBox Terminal. Please check your connection.");
+      console.error("Authentication Error:", err);
+      if (err.status === 401) {
+        alert("ACCESS DENIED: Invalid Terminal Key.");
+      } else if (err.status === 429) {
+        alert("RATE LIMITED: Too many authentication attempts. Please wait.");
       } else {
-        alert(`TERMINAL SYNC ERROR: ${err.message || 'Unknown error occurred.'}`);
+        alert(err.message || "Failed to authenticate with SwiftBox Terminal.");
       }
       return false;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     if (window.confirm("Disconnect from terminal session?")) {
-      await signOut(auth);
-      setIsAuthenticated(false);
-      setUserSession(null);
+      try {
+        await api.post('/api/v1/auth/logout');
+      } catch (err) {
+        // Best effort logout on server
+        console.warn("Server logout notification failed:", err.message);
+      } finally {
+        api.clearSession();
+        setIsAuthenticated(false);
+        setUserSession(null);
+      }
     }
-  };
+  }, []);
 
-  return { isAuthenticated, userSession, loading, authorize, logout };
+  return { 
+    isAuthenticated, 
+    userSession, 
+    loading: loading || isInitializing, 
+    authorize, 
+    logout 
+  };
 }

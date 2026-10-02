@@ -72,6 +72,7 @@ export default function Navbar() {
           <Link to="/product" className="hover:opacity-60 transition-opacity">Product</Link>
           <Link to="/news" className="hover:opacity-60 transition-opacity">News</Link>
           <Link to="/track" className="hover:opacity-60 transition-opacity">Tracker</Link>
+          <Link to="/admin" className="hover:opacity-60 transition-opacity">Admin</Link>
         </div>
 
         <button
@@ -110,6 +111,7 @@ export default function Navbar() {
               <button onClick={() => handleNavClick('/product')} className="text-3xl font-semibold tracking-tight text-ink w-full text-left">Product</button>
               <button onClick={() => handleNavClick('/news')} className="text-3xl font-semibold tracking-tight text-ink w-full text-left">News</button>
               <button onClick={() => handleNavClick('/track')} className="text-3xl font-semibold tracking-tight text-ink w-full text-left">Tracker</button>
+              <button onClick={() => handleNavClick('/admin')} className="text-3xl font-semibold tracking-tight text-ink w-full text-left">Admin</button>
             </nav>
             <p className="absolute bottom-32 text-[10px] font-semibold tracking-widest text-ink/20">
               SwiftBox Terminal v1.02

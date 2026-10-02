@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
 import L from 'leaflet';
 import { Truck, Clock, CheckCircle2, MousePointer2, Navigation } from 'lucide-react';
+import QRCodeCard from '../../components/ui/QRCodeCard';
 import 'leaflet/dist/leaflet.css';
 
 // --- LOGIC PRESERVED: Constants ---
@@ -136,6 +137,16 @@ export default function TrackerResult({ parcelData, error }) {
           <h4 className="text-4xl font-semibold tracking-tighter text-ink leading-none">
             {isAtSchool ? (parcelData.lockerId || 'N/A') : 'Transit'}
           </h4>
+        </div>
+
+        {/* Optical Kiosk QR Pass */}
+        <div className="p-4 border-b border-ink/5 bg-ink/[0.02]">
+          <QRCodeCard
+            value={parcelData.parcel_id || parcelData.parcelId}
+            title="Kiosk Optical Pass"
+            subtitle="Point at SwiftBox Kiosk camera to claim"
+            size={130}
+          />
         </div>
 
         {/* Sidebar Content: Live Event Log */}

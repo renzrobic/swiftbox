@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { ref, set } from 'firebase/database';
-import { db } from '../../config/firebase';
+import { api } from '../../services/api';
 
 const INITIAL_FORM = { 
   lockerId: 'L01', 
@@ -33,24 +32,13 @@ export default function AdminForm() {
     setIsSubmitting(true);
 
     try {
-      // 🚀 DIRECT DB WRITE: Bypass backend proxy, leverages Firebase Rules
-      await set(ref(db, `parcels/${id}`), {
-        parcel_id: id,
+      // 🛡️ Authoritative Backend Write: Register parcel via central API
+      await api.post('/api/v1/parcels', {
+        parcelId: id,
         sender: formData.sender || "Authorized Merchant",
-        recipient_phone: formData.phone,
+        phone: formData.phone.trim(),
         dimensions: "Standard",
-        status: "SHIPPING",
-        location: "Manila Gateway Hub",
-        coords: [14.5995, 120.9842],
-        lockerId: "TBA",
-        timestamp: Date.now(),
-        history: [{
-          status: 'Processed',
-          location: "Manila Gateway Hub",
-          coords: [14.5995, 120.9842],
-          time: Date.now(),
-          current: true
-        }]
+        lockerId: formData.lockerId
       });
 
       alert(`AUTHORIZED: ${id} registered successfully.`);

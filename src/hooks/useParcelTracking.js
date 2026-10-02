@@ -1,6 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+import { api } from '../services/api';
 
 export function useParcelTracking() {
   const [parcelData, setParcelData] = useState(null);
@@ -26,19 +25,16 @@ export function useParcelTracking() {
     setParcelData(null);
     
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/track/${trimmedId.toUpperCase()}`,
-        { signal: controller.signal }
-      );
+      // 🛡️ UNIFIED API CLIENT: Query canonical tracking endpoint
+      const data = await api.get(`/api/v1/tracking/${trimmedId.toUpperCase()}`, {
+        signal: controller.signal
+      });
       
-      if (!response.ok) throw new Error("Search failed");
-
-      const data = await response.json();
       setParcelData(data);
 
     } catch (err) {
       // Don't flag an error if we intentionally aborted it
-      if (err.name !== 'AbortError') {
+      if (err.name !== 'AbortError' && err.code !== 'REQUEST_TIMEOUT') {
         console.error("Tracking connection error:", err);
         setError(true);
       }

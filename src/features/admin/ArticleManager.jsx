@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, Loader2, Trash2, ImageIcon, Pencil, ChevronLeft } from 'lucide-react';
-import { db } from "../../config/firebase"; // Updated Path
-import { ref, push, set, onValue, remove } from 'firebase/database';
+import { api } from '../../services/api';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -71,16 +70,24 @@ export default function ArticleManager() {
   const [articles, setArticles] = useState([]);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [currentArticle, setCurrentArticle] = useState(INITIAL_ARTICLE_STATE);
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    const articlesRef = ref(db, 'articles');
-    return onValue(articlesRef, (snapshot) => {
-      const data = snapshot.val();
-      setArticles(data ? Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse() : []);
-    });
+  const fetchArticles = useCallback(async () => {
+    try {
+      const data = await api.get('/api/v1/articles');
+      setArticles(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load articles:", err);
+    } finally {
+      setFetching(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchArticles();
+  }, [fetchArticles]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,29 +122,33 @@ export default function ArticleManager() {
     e.preventDefault();
     setLoading(true);
     try {
-      const id = currentArticle.id || push(ref(db, 'articles')).key;
-      const articleData = {
-        ...currentArticle,
-        id,
-        date: currentArticle.date || new Date().toLocaleDateString('en-US', { 
-          month: 'short', day: 'numeric', year: 'numeric' 
-        }),
-        views: currentArticle.views || 0
-      };
-      await set(ref(db, `articles/${id}`), articleData);
+      // 🛡️ AUTHORITATIVE BACKEND WRITE: Server validates, sanitizes rich-text HTML against XSS, and records audit trail
+      if (currentArticle.id) {
+        await api.put(`/api/v1/articles/${currentArticle.id}`, currentArticle);
+      } else {
+        await api.post('/api/v1/articles', currentArticle);
+      }
+
       setIsEditorOpen(false);
       setCurrentArticle(INITIAL_ARTICLE_STATE);
+      await fetchArticles();
     } catch (err) {
       console.error("Sync Failed:", err);
-      alert("Sync Failed. Check your connection.");
+      alert(err.message || "Failed to save article.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this article?")) {
-      remove(ref(db, `articles/${id}`));
+      try {
+        await api.delete(`/api/v1/articles/${id}`);
+        await fetchArticles();
+      } catch (err) {
+        console.error("Delete Failed:", err);
+        alert(err.message || "Failed to delete article.");
+      }
     }
   };
 
@@ -147,7 +158,7 @@ export default function ArticleManager() {
         <div className="flex items-center gap-4">
           <button 
             type="button"
-            onClick={() => setIsEditorOpen(false)}
+            onClick={() => setIsEditorOpen(false)} 
             className="flex items-center gap-2 text-sm font-semibold tracking-wider text-ink/40 transition-colors hover:text-ink"
           >
             <ChevronLeft size={16} /> Back
@@ -252,7 +263,11 @@ export default function ArticleManager() {
       </div>
 
       <div className="space-y-2" role="list">
-        {articles.length === 0 ? (
+        {fetching ? (
+          <div className="p-8 text-center text-sm font-medium text-ink/40 flex items-center justify-center gap-2">
+            <Loader2 className="animate-spin" size={16} /> Loading articles...
+          </div>
+        ) : articles.length === 0 ? (
           <div className="p-8 text-center text-sm font-medium text-ink/30">No articles found. Create one above.</div>
         ) : (
           articles.map((art) => (

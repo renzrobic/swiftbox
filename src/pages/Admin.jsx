@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Newspaper, BarChart3, Settings,
-  Power, Server, Wallet, Users, ChevronDown
+  Power, Server, Wallet, Users, ChevronDown, Cpu
 } from 'lucide-react';
 
 // Hooks
@@ -15,10 +15,12 @@ import AdminAnalytics from '../features/admin/AdminAnalytics';
 import AdminUsers from '../features/admin/AdminUsers';
 import AdminFinance from '../features/admin/AdminFinance';
 import AdminInfrastructure from '../features/admin/AdminInfrastructure';
+import AdminSimulator from '../features/admin/AdminSimulator';
 import LoginGateway from '../features/admin/LoginGateway';
 
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Logistics', icon: LayoutDashboard },
+  { id: 'simulator', label: 'Hardware Sim', icon: Cpu },
   { id: 'infra', label: 'Infrastructure', icon: Server },
   { id: 'finance', label: 'Financials', icon: Wallet },
   { id: 'seo', label: 'News', icon: Newspaper },
@@ -145,6 +147,7 @@ export default function Admin() {
             transition={{ duration: 0.2 }}
           >
             {currentTab === 'dashboard' && <LogisticsDashboard />}
+            {currentTab === 'simulator' && <AdminSimulator />}
             {currentTab === 'infra' && <AdminInfrastructure />}
             {currentTab === 'finance' && <AdminFinance />}
             {currentTab === 'seo' && <ArticleManager />}

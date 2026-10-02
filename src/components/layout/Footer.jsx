@@ -18,6 +18,7 @@ const supportLinks = [
   { name: 'System Tracker', path: '/track' },
   { name: 'Documentation', path: '/documentation' },
   { name: 'System Status', path: '/status' },
+  { name: 'Admin Portal', path: '/admin' },
   { name: 'Help Center', path: '/help' },
   { name: 'Latest News', path: '/news' },
   { name: 'Privacy Policy', path: '/privacy' }

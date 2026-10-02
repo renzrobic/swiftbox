@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ref, onValue } from 'firebase/database';
-import { db } from '../../config/firebase';
+import { api } from '../../services/api';
 import AdminForm from './AdminForm';
 import MonitoringGrid from './MonitoringGrid'; 
 
@@ -17,37 +16,55 @@ export default function LogisticsDashboard() {
   useEffect(() => {
     let isMounted = true;
 
-    const parcelsRef = ref(db, 'parcels');
-    const lockersRef = ref(db, 'lockers');
-    const teamRef = ref(db, 'team');
+    // 🛡️ Authoritative Backend Fetch: Retrieves lockers, parcels, and team metrics
+    const fetchDashboardMetrics = async () => {
+      try {
+        const [lockersData, parcelsData, teamData] = await Promise.allSettled([
+          api.get('/api/v1/lockers'),
+          api.get('/api/v1/parcels'),
+          api.get('/api/v1/team')
+        ]);
 
-    const unsubParcels = onValue(parcelsRef, (snap) => {
-      if (!isMounted) return;
-      const data = snap.val() || {};
-      // Filter out dummy initialization records if any
-      const count = Object.keys(data).filter(k => k !== '_init').length;
-      setMetrics(prev => ({ ...prev, parcels: count, loading: false }));
-    }, (error) => console.error("Error fetching parcels:", error));
+        if (!isMounted) return;
 
-    const unsubLockers = onValue(lockersRef, (snap) => {
-      if (!isMounted) return;
-      const data = snap.val() || {};
-      const active = Object.values(data).filter(l => l.status === 'OCCUPIED').length;
-      setLockers(data);
-      setMetrics(prev => ({ ...prev, activeLockers: active, loading: false }));
-    }, (error) => console.error("Error fetching lockers:", error));
+        let activeCount = 0;
+        if (lockersData.status === 'fulfilled' && lockersData.value && typeof lockersData.value === 'object') {
+          const lockersObj = lockersData.value;
+          activeCount = Object.values(lockersObj).filter(l => l.status === 'OCCUPIED').length;
+          setLockers(lockersObj);
+        }
 
-    const unsubTeam = onValue(teamRef, (snap) => {
-      if (!isMounted) return;
-      const data = snap.val() || {};
-      setMetrics(prev => ({ ...prev, teamSize: Object.keys(data).filter(k => k !== '_init').length, loading: false }));
-    }, (error) => console.error("Error fetching team:", error));
+        let parcelCount = 0;
+        if (parcelsData.status === 'fulfilled' && parcelsData.value && typeof parcelsData.value === 'object') {
+          parcelCount = Object.keys(parcelsData.value).length;
+        }
+
+        let memberCount = 0;
+        if (teamData.status === 'fulfilled' && Array.isArray(teamData.value)) {
+          memberCount = teamData.value.length;
+        }
+
+        setMetrics({
+          parcels: parcelCount,
+          activeLockers: activeCount,
+          teamSize: memberCount,
+          loading: false
+        });
+      } catch (err) {
+        console.warn("Backend metrics fetch notice:", err.message);
+        if (isMounted) {
+          setMetrics(prev => ({ ...prev, loading: false }));
+        }
+      }
+    };
+
+    fetchDashboardMetrics();
+    // Poll backend every 10 seconds for fresh authoritative telemetry
+    const intervalId = setInterval(fetchDashboardMetrics, 10000);
 
     return () => {
       isMounted = false;
-      unsubParcels();
-      unsubLockers();
-      unsubTeam();
+      clearInterval(intervalId);
     };
   }, []);
 

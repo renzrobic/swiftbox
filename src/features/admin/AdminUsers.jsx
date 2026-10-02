@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2, Trash2, UserPlus } from 'lucide-react';
-import { db } from "../../config/firebase";
-import { ref, push, set, onValue, remove } from 'firebase/database';
+import { X, Loader2, Trash2, UserPlus, Key } from 'lucide-react';
+import { api } from '../../services/api';
 
 const INITIAL_MEMBER_STATE = { name: '', role: 'Maintenance', email: '', accessKey: '' };
 
@@ -10,15 +9,23 @@ export default function AdminUsers() {
   const [team, setTeam] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [currentMember, setCurrentMember] = useState(INITIAL_MEMBER_STATE);
 
-  useEffect(() => {
-    const teamRef = ref(db, 'team');
-    return onValue(teamRef, (snapshot) => {
-      const data = snapshot.val();
-      setTeam(data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : []);
-    });
+  const fetchTeam = useCallback(async () => {
+    try {
+      const data = await api.get('/api/v1/team');
+      setTeam(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load team:", err);
+    } finally {
+      setFetching(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchTeam();
+  }, [fetchTeam]);
 
   // Handle Esc key to close modal
   useEffect(() => {
@@ -38,23 +45,40 @@ export default function AdminUsers() {
     e.preventDefault();
     setLoading(true);
     try {
-      const id = push(ref(db, 'team')).key;
-      const finalKey = currentMember.accessKey || Math.floor(1000 + Math.random() * 9000).toString();
-      
-      await set(ref(db, `team/${id}`), { 
-        ...currentMember, 
-        id, 
-        accessKey: finalKey, 
-        status: 'Offline' 
+      // 🛡️ AUTHORITATIVE BACKEND WRITE: Server validates, hashes accessKey with bcrypt, returns sanitized safe view
+      const result = await api.post('/api/v1/team', {
+        name: currentMember.name.trim(),
+        email: currentMember.email.trim(),
+        role: currentMember.role,
+        accessKey: currentMember.accessKey ? currentMember.accessKey.trim() : undefined
       });
+
+      if (result.initialKey) {
+        alert(`MEMBER AUTHORIZED!\n\nGenerated One-Time Access Key: ${result.initialKey}\n\nPlease share this key securely with the user. It will not be shown again.`);
+      } else {
+        alert("Member authorized successfully.");
+      }
 
       setIsModalOpen(false);
       setCurrentMember(INITIAL_MEMBER_STATE);
+      await fetchTeam();
     } catch (err) {
       console.error("Auth Error:", err);
-      alert("Failed to authorize user.");
+      alert(err.message || "Failed to authorize user.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`Revoke authorization for ${name}?`)) {
+      try {
+        await api.delete(`/api/v1/team/${id}`);
+        await fetchTeam();
+      } catch (err) {
+        console.error("Delete Error:", err);
+        alert(err.message || "Failed to remove member.");
+      }
     }
   };
 
@@ -62,48 +86,59 @@ export default function AdminUsers() {
     <div className="space-y-8 text-left">
       {/* Header section */}
       <header className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-ink">Team</h2>
+        <div>
+          <h2 className="text-2xl font-semibold text-ink">Team</h2>
+          <p className="text-[10px] font-semibold text-ink/40 tracking-wider mt-1">RBAC & Terminal Access Control</p>
+        </div>
         <button 
           type="button"
           onClick={() => setIsModalOpen(true)} 
-          className="bg-ink text-white px-6 py-3 rounded-xl lg:rounded-2xl font-semibold tracking-wider text-[11px] shadow-md transition-all hover:bg-black active:scale-95"
+          className="bg-ink text-white px-6 py-3 rounded-xl lg:rounded-2xl font-semibold tracking-wider text-[11px] shadow-md transition-all hover:bg-black active:scale-95 flex items-center gap-2"
         >
-          Invite Member
+          <UserPlus size={14} /> Invite Member
         </button>
       </header>
 
       {/* Team List */}
       <div className="space-y-2" role="list">
-        {team.map((user) => (
-          <div 
-            key={user.id} 
-            role="listitem"
-            className="bg-white border border-ink/10 p-4 rounded-xl lg:rounded-2xl flex items-center justify-between transition-all hover:shadow-sm"
-          >
-            <div className="flex items-center gap-4">
-              <div 
-                aria-hidden="true"
-                className="h-10 w-10 bg-ink rounded-lg flex items-center justify-center text-white font-semibold text-xs"
-              >
-                {user.name?.[0] || '?'}
-              </div>
-              <div>
-                <p className="font-semibold text-sm text-ink">{user.name}</p>
-                <p className="text-[9px] font-semibold text-ink/80 tracking-wider">
-                  {user.role} • <span className="text-ink/60">Key: {user.accessKey}</span>
-                </p>
-              </div>
-            </div>
-            <button 
-              type="button"
-              aria-label={`Remove ${user.name}`}
-              onClick={() => remove(ref(db, `team/${user.id}`))} 
-              className="p-2 text-ink/20 hover:text-red-500 transition-colors"
-            >
-              <Trash2 size={16} />
-            </button>
+        {fetching ? (
+          <div className="p-8 text-center text-sm font-medium text-ink/40 flex items-center justify-center gap-2">
+            <Loader2 className="animate-spin" size={16} /> Loading team members...
           </div>
-        ))}
+        ) : team.length === 0 ? (
+          <div className="p-8 text-center text-sm font-medium text-ink/30">No team members registered.</div>
+        ) : (
+          team.map((user) => (
+            <div 
+              key={user.id} 
+              role="listitem"
+              className="bg-white border border-ink/10 p-4 rounded-xl lg:rounded-2xl flex items-center justify-between transition-all hover:shadow-sm"
+            >
+              <div className="flex items-center gap-4">
+                <div 
+                  aria-hidden="true"
+                  className="h-10 w-10 bg-ink rounded-lg flex items-center justify-center text-white font-semibold text-xs"
+                >
+                  {user.name?.[0] || '?'}
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-ink">{user.name}</p>
+                  <p className="text-[9px] font-semibold text-ink/80 tracking-wider">
+                    {user.role} • <span className="text-ink/60">{user.email || 'No Email'}</span> • <span className="text-emerald-600 font-medium">{user.status || 'Active'}</span>
+                  </p>
+                </div>
+              </div>
+              <button 
+                type="button"
+                aria-label={`Remove ${user.name}`}
+                onClick={() => handleDelete(user.id, user.name)} 
+                className="p-2 text-ink/20 hover:text-red-500 transition-colors"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Invite Modal */}
@@ -118,10 +153,13 @@ export default function AdminUsers() {
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               exit={{ opacity: 0, y: 20 }} 
-              className="bg-white w-full max-w-md rounded-xl lg:rounded-2xl p-8 shadow-2xl"
+              className="bg-white w-full max-w-md rounded-xl lg:rounded-2xl p-8 shadow-2xl border border-ink/10"
             >
               <div className="flex justify-between items-center mb-8">
-                <h3 className="text-xl font-semibold text-ink">Authorize User</h3>
+                <div>
+                  <h3 className="text-xl font-semibold text-ink">Authorize Member</h3>
+                  <p className="text-[10px] font-semibold text-ink/40 tracking-wider mt-0.5">Assign Access Key & RBAC Role</p>
+                </div>
                 <button 
                   type="button"
                   aria-label="Close modal"
@@ -140,7 +178,7 @@ export default function AdminUsers() {
                   value={currentMember.name} 
                   onChange={handleChange} 
                   placeholder="Full Name" 
-                  className="w-full bg-ink/5 rounded-xl p-4 font-semibold text-ink outline-none text-sm placeholder:text-ink/30" 
+                  className="w-full bg-ink/5 rounded-xl p-4 font-semibold text-ink outline-none text-sm placeholder:text-ink/30 border border-transparent focus:border-ink/20" 
                 />
                 <input 
                   required 
@@ -150,25 +188,27 @@ export default function AdminUsers() {
                   value={currentMember.email} 
                   onChange={handleChange} 
                   placeholder="Email Address" 
-                  className="w-full bg-ink/5 rounded-xl p-4 font-semibold text-ink outline-none text-sm placeholder:text-ink/30" 
+                  className="w-full bg-ink/5 rounded-xl p-4 font-semibold text-ink outline-none text-sm placeholder:text-ink/30 border border-transparent focus:border-ink/20" 
                 />
-                <input 
-                  name="accessKey" 
-                  maxLength={8} 
-                  value={currentMember.accessKey} 
-                  onChange={handleChange} 
-                  placeholder="Access Key (Optional)" 
-                  className="w-full bg-ink/5 rounded-xl p-4 font-semibold text-ink outline-none text-sm placeholder:text-ink/30" 
-                />
+                <div className="relative">
+                  <input 
+                    name="accessKey" 
+                    maxLength={16} 
+                    value={currentMember.accessKey} 
+                    onChange={handleChange} 
+                    placeholder="Access Key (Leave empty to auto-generate)" 
+                    className="w-full bg-ink/5 rounded-xl p-4 font-semibold text-ink outline-none text-sm placeholder:text-ink/30 border border-transparent focus:border-ink/20" 
+                  />
+                </div>
                 <select 
                   name="role" 
                   value={currentMember.role} 
                   onChange={handleChange} 
-                  className="w-full bg-ink/5 rounded-xl p-4 font-semibold text-ink outline-none text-xs cursor-pointer"
+                  className="w-full bg-ink/5 rounded-xl p-4 font-semibold text-ink outline-none text-xs cursor-pointer border border-transparent focus:border-ink/20"
                 >
-                  <option value="Maintenance">Maintenance</option>
-                  <option value="Operations">Operations</option>
-                  <option value="Super Admin">Super Admin</option>
+                  <option value="Maintenance">Maintenance (Compartment Diagnostics Only)</option>
+                  <option value="Operations">Operations (Parcels & Announcements)</option>
+                  <option value="Super Admin">Super Admin (Full Terminal Access)</option>
                 </select>
 
                 <button 
@@ -176,7 +216,7 @@ export default function AdminUsers() {
                   disabled={loading} 
                   className="w-full bg-ink text-white py-4 rounded-xl font-semibold tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all hover:bg-black disabled:opacity-50"
                 >
-                  {loading ? <Loader2 className="animate-spin" size={20} /> : "Authorize User"}
+                  {loading ? <Loader2 className="animate-spin" size={20} /> : "Authorize Member"}
                 </button>
               </form>
             </motion.div>
